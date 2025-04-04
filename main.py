@@ -10,6 +10,9 @@ SCREEN_HEIGHT = 550
 ICON_SIZE = 80
 PADDING = 5
 
+BUTTON_WIDTH = 200
+BUTTON_HEIGHT = 60
+
 font = pg.font.Font(None, 40)
 
 
@@ -22,6 +25,42 @@ def load_image(file, width, height):
 
 def text_render(text):
     return font.render(str(text), True, 'blue')
+
+
+class Button:
+    def __init__(self, x, y):
+        self.idle_image = load_image('image/button.png', BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.pressed_image = load_image('image/button_clicked.png', BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.image = self.idle_image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+        self.is_pressed = False
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+    def update(self):
+        mouse_pos = pg.mouse.get_pos()
+        if self.rect.collidepoint(mouse_pos):
+            if self.is_pressed:
+                self.image = self.pressed_image
+            else:
+                self.image = self.idle_image
+
+    def is_clicked(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            if self.rect.collidepoint(event.pos):
+                self.is_pressed = True
+        if event.type == pg.MOUSEBUTTONUP and event.button == 1:
+            self.is_pressed = False
+
+
+
+
+
+
+
 
 class Game:
     def __init__(self):
@@ -42,6 +81,12 @@ class Game:
         self.health_image = load_image('image/health.png', ICON_SIZE, ICON_SIZE)
         self.money_image = load_image('image/money.png', ICON_SIZE, ICON_SIZE)
         self.pet_image = load_image('image/dog.png', 310, 500)
+
+        button_x = SCREEN_WIDTH - BUTTON_WIDTH - PADDING
+
+        self.eat_button = Button(button_x, PADDING + ICON_SIZE)
+
+
         self.run()
 
     def run(self):
@@ -55,9 +100,9 @@ class Game:
             if event.type == pg.QUIT:
                 pg.quit()
                 exit()
-
+            self.eat_button.is_clicked(event)
     def update(self):
-        ...
+        self.eat_button.update()
     def draw(self):
 
         self.screen.blit(self.background, (0, 0))
@@ -74,6 +119,8 @@ class Game:
         self.screen.blit(text_render(self.money), (715 + ICON_SIZE, PADDING * 6))
 
         self.screen.blit(self.pet_image,(285, 100))
+
+        self.eat_button.draw(self.screen)
 
         pg.display.flip()
 
