@@ -14,6 +14,9 @@ BUTTON_WIDTH = 200
 BUTTON_HEIGHT = 60
 
 font = pg.font.Font(None, 40)
+mini_font = pg.font.Font(None, 20)
+
+
 
 
 
@@ -28,14 +31,15 @@ def text_render(text):
 
 
 class Button:
-    def __init__(self, text, x, y):
-        self.idle_image = load_image('image/button.png', BUTTON_WIDTH, BUTTON_HEIGHT)
-        self.pressed_image = load_image('image/button_clicked.png', BUTTON_WIDTH, BUTTON_HEIGHT)
+    def __init__(self, text, x, y, width=BUTTON_WIDTH, height=BUTTON_HEIGHT, text_font=font):
+        self.idle_image = load_image('image/button.png', width, height)
+        self.pressed_image = load_image('image/button_clicked.png', width, height)
         self.image = self.idle_image
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
-        self.text = text_render(text)
+        self.text_font = text_font
+        self.text = self.text_font.render(str(text), True, 'black')
         self.text_rect = self.text.get_rect()
         self.text_rect.center = self.rect.center
 
@@ -94,6 +98,10 @@ class Game:
         self.clouthes_button = Button('одежда', button_x, PADDING + ICON_SIZE + 70)
         self.games_button = Button('игры', button_x, PADDING + ICON_SIZE + 140)
 
+        self.upgrade = Button('Улучшить', SCREEN_WIDTH - ICON_SIZE, 0,
+                       width=BUTTON_WIDTH // 3, height=BUTTON_HEIGHT // 3,
+                              text_font=mini_font)
+
 
         self.INCREASE_COINS = pg.USEREVENT + 1
         pg.time.set_timer(self.INCREASE_COINS, 1000)
@@ -125,6 +133,7 @@ class Game:
         self.eat_button.update()
         self.clouthes_button.update()
         self.games_button.update()
+        self.upgrade.update()
     def draw(self):
 
         self.screen.blit(self.background, (0, 0))
@@ -145,6 +154,7 @@ class Game:
         self.eat_button.draw(self.screen)
         self.clouthes_button.draw(self.screen)
         self.games_button.draw(self.screen)
+        self.upgrade.draw(self.screen)
 
         pg.display.flip()
 
