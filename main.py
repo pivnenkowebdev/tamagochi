@@ -24,21 +24,27 @@ def load_image(file, width, height):
 
 
 def text_render(text):
-    return font.render(str(text), True, 'blue')
+    return font.render(str(text), True, 'black')
 
 
 class Button:
-    def __init__(self, x, y):
+    def __init__(self, text, x, y):
         self.idle_image = load_image('image/button.png', BUTTON_WIDTH, BUTTON_HEIGHT)
         self.pressed_image = load_image('image/button_clicked.png', BUTTON_WIDTH, BUTTON_HEIGHT)
         self.image = self.idle_image
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
+        self.text = text_render(text)
+        self.text_rect = self.text.get_rect()
+        self.text_rect.center = self.rect.center
+
         self.is_pressed = False
+
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+        screen.blit(self.text, self.text_rect)
 
     def update(self):
         mouse_pos = pg.mouse.get_pos()
@@ -84,7 +90,10 @@ class Game:
 
         button_x = SCREEN_WIDTH - BUTTON_WIDTH - PADDING
 
-        self.eat_button = Button(button_x, PADDING + ICON_SIZE)
+        self.eat_button = Button('еда', button_x, PADDING + ICON_SIZE)
+        self.clouthes_button = Button('одежда', button_x, PADDING + ICON_SIZE + 70)
+        self.games_button = Button('игры', button_x, PADDING + ICON_SIZE + 140)
+
 
 
         self.run()
@@ -101,8 +110,12 @@ class Game:
                 pg.quit()
                 exit()
             self.eat_button.is_clicked(event)
+            self.clouthes_button.is_clicked(event)
+            self.games_button.is_clicked(event)
     def update(self):
         self.eat_button.update()
+        self.clouthes_button.update()
+        self.games_button.update()
     def draw(self):
 
         self.screen.blit(self.background, (0, 0))
@@ -121,6 +134,8 @@ class Game:
         self.screen.blit(self.pet_image,(285, 100))
 
         self.eat_button.draw(self.screen)
+        self.clouthes_button.draw(self.screen)
+        self.games_button.draw(self.screen)
 
         pg.display.flip()
 
