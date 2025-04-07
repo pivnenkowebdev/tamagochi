@@ -95,6 +95,9 @@ class Game:
         self.games_button = Button('игры', button_x, PADDING + ICON_SIZE + 140)
 
 
+        self.INCREASE_COINS = pg.USEREVENT + 1
+        pg.time.set_timer(self.INCREASE_COINS, 1000)
+
 
         self.run()
 
@@ -105,7 +108,13 @@ class Game:
             self.draw()
 
     def event(self):
+
+
         for event in pg.event.get():
+
+            if event.type == self.INCREASE_COINS:
+                self.money += 1
+
             if event.type == pg.QUIT:
                 pg.quit()
                 exit()
