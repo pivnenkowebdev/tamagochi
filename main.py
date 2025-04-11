@@ -31,7 +31,8 @@ def text_render(text):
 
 
 class Button:
-    def __init__(self, text, x, y, width=BUTTON_WIDTH, height=BUTTON_HEIGHT, text_font=font):
+    def __init__(self, text, x, y, width=BUTTON_WIDTH, height=BUTTON_HEIGHT, text_font=font, func=None):
+        self.func = func
         self.idle_image = load_image('image/button.png', width, height)
         self.pressed_image = load_image('image/button_clicked.png', width, height)
         self.image = self.idle_image
@@ -62,15 +63,9 @@ class Button:
         if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
                 self.is_pressed = True
+                self.func()
         if event.type == pg.MOUSEBUTTONUP and event.button == 1:
             self.is_pressed = False
-
-
-
-
-
-
-
 
 class Game:
     def __init__(self):
@@ -83,7 +78,8 @@ class Game:
         self.happiness = 100
         self.satiety = 100
         self.health = 100
-
+        self.coins_per_second = 1
+        self.costs_of_upgrade = {100: False, 1000: False, 5000: False, 10000: False}
 
         self.background = load_image('image/background.png', SCREEN_WIDTH, SCREEN_HEIGHT)
         self.happiness_image = load_image('image/happiness.png', ICON_SIZE, ICON_SIZE)
@@ -100,14 +96,20 @@ class Game:
 
         self.upgrade = Button('Улучшить', SCREEN_WIDTH - ICON_SIZE, 0,
                        width=BUTTON_WIDTH // 3, height=BUTTON_HEIGHT // 3,
-                              text_font=mini_font)
-
+                              text_font=mini_font,func=self.increase_money)
 
         self.INCREASE_COINS = pg.USEREVENT + 1
         pg.time.set_timer(self.INCREASE_COINS, 1000)
 
-
         self.run()
+
+    def increase_money(self):
+        for cost, check in self.costs_of_upgrade.items():
+            if not check and self.money >= cost:
+                self.coins_per_second += 1
+                self.money -= cost
+                self.costs_of_upgrade[cost] = True
+                break
 
     def run(self):
         while True:
@@ -116,19 +118,23 @@ class Game:
             self.draw()
 
     def event(self):
-
-
         for event in pg.event.get():
 
             if event.type == self.INCREASE_COINS:
-                self.money += 1
+                self.money += self.coins_per_second
+
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                self.money += self.coins_per_second
+
 
             if event.type == pg.QUIT:
                 pg.quit()
                 exit()
+
             self.eat_button.is_clicked(event)
             self.clouthes_button.is_clicked(event)
             self.games_button.is_clicked(event)
+            self.upgrade.is_clicked(event)
     def update(self):
         self.eat_button.update()
         self.clouthes_button.update()
@@ -158,10 +164,7 @@ class Game:
 
         pg.display.flip()
 
-
-
-
-
-
 if __name__ == "__main__":
     Game()
+
+
