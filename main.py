@@ -7,19 +7,59 @@ pg.init()
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 550
 
+DOG_WIDTH = 310
+DOG_HEIGHT = 500
+
+DOG_Y = 100
+
 ICON_SIZE = 80
 PADDING = 5
 
 BUTTON_WIDTH = 200
 BUTTON_HEIGHT = 60
 
+MENU_NAV_XPAD = 90
+MENU_NAV_YPAD = 130
+
+
 font = pg.font.Font(None, 40)
 mini_font = pg.font.Font(None, 20)
 
+class Item:
+  def __init__(self, name, price, file):
+    self.name = name
+    self.price = price
+    self.is_bought = False
+    self.is_using = False
+    self.image = load_image(file, DOG_WIDTH // 1.7, DOG_HEIGHT // 1.7)
 
 
+class ClothesMenu:
+    def __init__(self, game):
+        self.game = game
+        self.menu_page = load_image("images/menu/menu_page.png", SCREEN_WIDTH, SCREEN_HEIGHT)
+
+        self.bottom_label_off = load_image("images/menu/bottom_label_off.png", SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.bottom_label_on = load_image("images/menu/bottom_label_on.png", SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.top_label_off = load_image("images/menu/top_label_off.png", SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.top_label_on = load_image("images/menu/top_label_on.png", SCREEN_WIDTH, SCREEN_HEIGHT)
+
+        self.items = [Item("Синяя футболка", 10, "images/items/blue t-shirt.png"),
+                      Item("Ботинки", 50, "images/items/boots.png"),
+                      Item("Шляпа", 50, "images/items/hat.png")]
+
+        self.current_item = 0
+
+        self.item_rect = self.items[0].image.get_rect()
+        self.item_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+
+        self.next_button = Button("Вперёд", SCREEN_WIDTH - MENU_NAV_XPAD - BUTTON_WIDTH, SCREEN_HEIGHT - MENU_NAV_YPAD,
+                                   width=int(BUTTON_WIDTH // 1.2), height=int(BUTTON_HEIGHT // 1.2),
+                                   func=self.to_next)
 
 
+    def to_next(self):
+        ...
 def load_image(file, width, height):
     image = pg.image.load(file).convert_alpha()
     image = pg.transform.scale(image, (width, height))
