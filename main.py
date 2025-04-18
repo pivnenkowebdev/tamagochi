@@ -1,5 +1,6 @@
 import pygame as pg
 
+
 # Инициализация pg
 pg.init()
 
@@ -72,7 +73,7 @@ class ClothesMenu:
     def draw(self, screen):
         screen.blit(self.menu_page, (0, 0))
 
-        screen.blit(self.items[self.current_item], self.item_rect)
+        screen.blit(self.items[self.current_item].image, self.item_rect)
 
         if self.items[self.current_item].is_bought:
             screen.blit(self. bottom_label_on, (0, 0))
@@ -212,7 +213,7 @@ class Game:
                     self.mode = "Main"
 
             self.eat_button.is_clicked(event)
-            self.clouthes_button.is_clicked(event)
+            self.clothes_button.is_clicked(event)
             self.games_button.is_clicked(event)
             self.upgrade.is_clicked(event)
 
@@ -225,7 +226,7 @@ class Game:
         #     button.update()
         self.clothes_menu.update()
         self.eat_button.update()
-        self.clouthes_button.update()
+        self.clothes_button.update()
         self.games_button.update()
         self.upgrade.update()
     def draw(self):
@@ -246,7 +247,7 @@ class Game:
         self.screen.blit(self.pet_image,(285, 100))
 
         self.eat_button.draw(self.screen)
-        self.clouthes_button.draw(self.screen)
+        self.clothes_button.draw(self.screen)
         self.games_button.draw(self.screen)
         self.upgrade.draw(self.screen)
 
