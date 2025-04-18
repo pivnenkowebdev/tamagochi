@@ -99,8 +99,8 @@ def text_render(text):
 class Button:
     def __init__(self, text, x, y, width=BUTTON_WIDTH, height=BUTTON_HEIGHT, text_font=font, func=None):
         self.func = func
-        self.idle_image = load_image('image/button.png', width, height)
-        self.pressed_image = load_image('image/button_clicked.png', width, height)
+        self.idle_image = load_image('images/button.png', width, height)
+        self.pressed_image = load_image('images/button_clicked.png', width, height)
         self.image = self.idle_image
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
@@ -147,25 +147,32 @@ class Game:
         self.coins_per_second = 1
         self.costs_of_upgrade = {100: False, 1000: False, 5000: False, 10000: False}
 
-        self.background = load_image('image/background.png', SCREEN_WIDTH, SCREEN_HEIGHT)
-        self.happiness_image = load_image('image/happiness.png', ICON_SIZE, ICON_SIZE)
-        self.satiety_image = load_image('image/satiety.png', ICON_SIZE, ICON_SIZE)
-        self.health_image = load_image('image/health.png', ICON_SIZE, ICON_SIZE)
-        self.money_image = load_image('image/money.png', ICON_SIZE, ICON_SIZE)
-        self.pet_image = load_image('image/dog.png', 310, 500)
+        self.background = load_image('images/background.png', SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.happiness_image = load_image('images/happiness.png', ICON_SIZE, ICON_SIZE)
+        self.satiety_image = load_image('images/satiety.png', ICON_SIZE, ICON_SIZE)
+        self.health_image = load_image('images/health.png', ICON_SIZE, ICON_SIZE)
+        self.money_image = load_image('images/money.png', ICON_SIZE, ICON_SIZE)
+        self.pet_image = load_image('images/dog.png', 310, 500)
 
         button_x = SCREEN_WIDTH - BUTTON_WIDTH - PADDING
 
+        # self.Clothes_menu = ClothesMenu(self)
+
+        self.mode = 'Main'
+
         self.eat_button = Button('еда', button_x, PADDING + ICON_SIZE)
-        self.clouthes_button = Button('одежда', button_x, PADDING + ICON_SIZE + 70)
+        self.clothes_button = Button('одежда', button_x, PADDING + ICON_SIZE + 70, func=self.clothes_menu_on)
         self.games_button = Button('игры', button_x, PADDING + ICON_SIZE + 140)
 
         self.upgrade = Button('Улучшить', SCREEN_WIDTH - ICON_SIZE, 0,
                        width=BUTTON_WIDTH // 3, height=BUTTON_HEIGHT // 3,
                               text_font=mini_font,func=self.increase_money)
 
+        self.clothes_menu = ClothesMenu(self)
+
         self.INCREASE_COINS = pg.USEREVENT + 1
         pg.time.set_timer(self.INCREASE_COINS, 1000)
+
 
         self.run()
 
@@ -183,6 +190,9 @@ class Game:
             self.update()
             self.draw()
 
+    def clothes_menu_on(self):
+        self.mode = 'Clothes menu'
+
     def event(self):
         for event in pg.event.get():
 
@@ -197,11 +207,23 @@ class Game:
                 pg.quit()
                 exit()
 
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    self.mode = "Main"
+
             self.eat_button.is_clicked(event)
             self.clouthes_button.is_clicked(event)
             self.games_button.is_clicked(event)
             self.upgrade.is_clicked(event)
+
+            # for button in self.buttons:
+            #     button.is_clicked(event)
+
+            self.clothes_menu.is_clicked(event)
     def update(self):
+        # for button in self.buttons:
+        #     button.update()
+        self.clothes_menu.update()
         self.eat_button.update()
         self.clouthes_button.update()
         self.games_button.update()
@@ -228,7 +250,12 @@ class Game:
         self.games_button.draw(self.screen)
         self.upgrade.draw(self.screen)
 
+        if self.mode == "Clothes menu":
+            self.clothes_menu.draw(self.screen)
+
         pg.display.flip()
+
+
 
 if __name__ == "__main__":
     Game()
