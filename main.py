@@ -169,7 +169,7 @@ class ClothesMenu:
         screen.blit(self.buy_text, self.buy_text_rect)
 
 class Food:
-    def __init__(self, name, image, price, file, satiety, medicine_power=0):
+    def __init__(self, name, image, price, satiety, medicine_power=0):
         self.name = name
         self.image = image
         self.price = price
@@ -189,10 +189,10 @@ class MenuFood:
         self.top_label_on = load_image("images/menu/top_label_on.png", SCREEN_WIDTH, SCREEN_HEIGHT)
 
         self.items = [
-            Food("Мясо", 30, "images/food/meat.png", 10),
-            Food("Корм", 40, "images/food/dog food.png", 15),
-            Food("Элитный корм", 100, "images/food/dog food elite.png", 25, medicine_power=2),
-            Food("Лекарство", 200, "images/food/medicine.png", 0, medicine_power=10)
+            Food("Мясо", "images/food/meat.png",30, 10),
+            Food("Корм", "images/food/dog food.png", 40, 15),
+            Food("Элитный корм", "images/food/dog food elite.png", 100, 25, medicine_power=2),
+            Food("Лекарство", "images/food/medicine.png", 200, 0, medicine_power=10)
         ]
 
         self.current_item = 0
@@ -206,8 +206,6 @@ class MenuFood:
         self.previous_button = Button("Назад", MENU_NAV_XPAD + 30, SCREEN_HEIGHT - MENU_NAV_YPAD,
                                       width=int(BUTTON_WIDTH // 1.2), height=int(BUTTON_HEIGHT // 1.2),
                                       func=self.to_previous)
-
-
 
         self.buy_button = Button("Съесть", SCREEN_WIDTH // 2 - int(BUTTON_WIDTH // 1.5) // 2,
                                  SCREEN_HEIGHT // 2 + 95,
@@ -356,7 +354,7 @@ class Game:
         # Создание кнопок
         button_x = SCREEN_WIDTH - BUTTON_WIDTH - PADDING
 
-        self.eat_button = Button("Еда", button_x, PADDING + ICON_SIZE)
+        self.eat_button = Button("Еда", button_x, PADDING + ICON_SIZE, func=self.food_menu_on)
         self.clothes_button = Button("Одежда", button_x, PADDING * 2 + ICON_SIZE + BUTTON_HEIGHT,
                                      func=self.clothes_menu_on)
         self.play_button = Button("Игры", button_x, PADDING * 3 + ICON_SIZE + BUTTON_HEIGHT * 2)
@@ -372,11 +370,15 @@ class Game:
         pg.time.set_timer(self.INCREASE_COINS, 1000)
 
         self.clothes_menu = ClothesMenu(self)
+        self.food_menu = MenuFood(self)
 
         self.run()
 
     def clothes_menu_on(self):
         self.mode = "Clothes menu"
+
+    def food_menu_on(self):
+        self.mode = "Food menu"
 
     def increase_money(self):
         for cost, check in self.costs_of_upgrade.items():
@@ -409,12 +411,16 @@ class Game:
 
             for button in self.buttons:
                 button.is_clicked(event)
+            if self.mode != 'Main':
+                self.clothes_menu.is_clicked(event)
+                self.food_menu.is_clicked(event)
 
 
     def update(self):
         for button in self.buttons:
             button.update()
         self.clothes_menu.update()
+        self.food_menu.update()
 
     def draw(self):
         # Отрисовка интерфейса
@@ -445,6 +451,9 @@ class Game:
 
         if self.mode == "Clothes menu":
             self.clothes_menu.draw(self.screen)
+
+        if self.mode == "Food menu":
+            self.food_menu.draw(self.screen)
 
         pg.display.flip()
 
