@@ -415,6 +415,15 @@ class Game:
                 self.clothes_menu.is_clicked(event)
                 self.food_menu.is_clicked(event)
 
+            if event.type == self.DECREASE:
+                chance = random.randint(1, 10)
+                if chance <= 5:
+                    self.satiety -= 1
+                elif 5 < chance <= 9:
+                    self.happiness -= 1
+                else:
+                    self.health -= 1
+
 
     def update(self):
         for button in self.buttons:
