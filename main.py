@@ -280,6 +280,50 @@ class MenuFood:
         screen.blit(self.price_text, self.price_text_rect)
         screen.blit(self.name_text, self.name_text_rect)
 
+
+class Toy(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+
+class Dog(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+
+
+class MiniGame:
+    def __init__(self, game):
+        self.game = game
+
+        self.background = load_image('images/game_background.png', SCREEN_WIDTH, SCREEN_HEIGHT)
+
+        self.dog = Dog()
+        self.toys = pg.sprite.Group()
+
+        self.score = 0
+
+        self.start_time = pg.time.get_ticks()
+        self.interval = 1000 * 5
+
+    def new_game(self):
+        self.dog = Dog()
+        self.toys = pg.sprite.Group()
+
+        self.score = 0
+
+        self.start_time = pg.time.get_ticks()
+        self.interval = 1000 * 5
+
+    def update(self):
+        ...
+
+    def draw(self, screen):
+        screen.blit(self.background, (0, 0))
+
+        # screen.blit(self.dog_image, self.dog_rect)
+
+        screen.blit(text_render(self.score), (MENU_NAV_XPAD + 20, 80))
+
+        self.toys.draw(screen)
 class Button:
     def __init__(self, text, x, y, width=BUTTON_WIDTH, height=BUTTON_HEIGHT, text_font=font, func=None):
         self.func = func
@@ -357,7 +401,7 @@ class Game:
         self.eat_button = Button("Еда", button_x, PADDING + ICON_SIZE, func=self.food_menu_on)
         self.clothes_button = Button("Одежда", button_x, PADDING * 2 + ICON_SIZE + BUTTON_HEIGHT,
                                      func=self.clothes_menu_on)
-        self.play_button = Button("Игры", button_x, PADDING * 3 + ICON_SIZE + BUTTON_HEIGHT * 2)
+        self.play_button = Button("Игры", button_x, PADDING * 3 + ICON_SIZE + BUTTON_HEIGHT * 2, func=self.game_on)
 
         self.upgrade_button = Button("Улучшить", SCREEN_WIDTH - ICON_SIZE, 0,
                                      width=BUTTON_WIDTH // 3, height=BUTTON_HEIGHT // 3,
@@ -371,6 +415,7 @@ class Game:
 
         self.clothes_menu = ClothesMenu(self)
         self.food_menu = MenuFood(self)
+        self.mini_game = MiniGame(self)
 
         self.run()
 
@@ -379,6 +424,10 @@ class Game:
 
     def food_menu_on(self):
         self.mode = "Food menu"
+
+    def game_on(self):
+        self.mode = 'Mini game'
+        self.mini_game.new_game()
 
     def increase_money(self):
         for cost, check in self.costs_of_upgrade.items():
@@ -415,14 +464,14 @@ class Game:
                 self.clothes_menu.is_clicked(event)
                 self.food_menu.is_clicked(event)
 
-            if event.type == self.DECREASE:
-                chance = random.randint(1, 10)
-                if chance <= 5:
-                    self.satiety -= 1
-                elif 5 < chance <= 9:
-                    self.happiness -= 1
-                else:
-                    self.health -= 1
+            # if event.type == self.DECREASE:
+            #     chance = random.randint(1, 10)
+            #     if chance <= 5:
+            #         self.satiety -= 1
+            #     elif 5 < chance <= 9:
+            #         self.happiness -= 1
+            #     else:
+            #         self.health -= 1
 
 
     def update(self):
@@ -463,6 +512,9 @@ class Game:
 
         if self.mode == "Food menu":
             self.food_menu.draw(self.screen)
+
+        if self.mode == "Mini game":
+            self.mini_game.draw(self.screen)
 
         pg.display.flip()
 
