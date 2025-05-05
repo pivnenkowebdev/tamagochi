@@ -24,6 +24,8 @@ MENU_NAV_YPAD = 130
 
 FOOD_SIZE = 200
 
+TOY_SIZE = 100
+
 font = pg.font.Font(None, 40)
 font_mini = pg.font.Font(None, 15)
 
@@ -284,6 +286,17 @@ class MenuFood:
 class Toy(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
+        random_image = random.choice['images/toys/ball.png', 'images/toys/blue_done.png', 'images/toys/red_bone.png']
+
+        self.image = load_image(random_image, TOY_SIZE, TOY_SIZE)
+        self.rect = self.image.get_rect()
+
+        self.rect.x = random.randint(MENU_NAV_XPAD, SCREEN_WIDTH - MENU_NAV_XPAD - self.image.get_width())
+        self.rect.y = 30
+
+    def update(self):
+        self.rect.y += 2
+
 
 class Dog(pg.sprite.Sprite):
     def __init__(self):
