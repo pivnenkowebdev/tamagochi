@@ -62,7 +62,7 @@ class ClothesMenu:
         self.top_label_off = load_image("images/menu/top_label_off.png", SCREEN_WIDTH, SCREEN_HEIGHT)
         self.top_label_on = load_image("images/menu/top_label_on.png", SCREEN_WIDTH, SCREEN_HEIGHT)
 
-        self.items = [Item("Синяя футболка", 10, "images/items/blue t-shirt.png"),
+        self.items = [Item("Синяя футболка", 10, "images/items/blue-t-shirt.png"),
                       Item("Ботинки", 50, "images/items/boots.png"),
                       Item("Шляпа", 50, "images/items/hat.png")]
 
@@ -115,10 +115,7 @@ class ClothesMenu:
         self.use_button.is_clicked(event)
         self.buy_button.is_clicked(event)
 
-    def to_next(self):
-        if self.current_item != len(self.items) - 1:
-            self.current_item += 1
-
+    def update_labels(self):
         self.price_text = text_render(self.items[self.current_item].price)
         self.price_text_rect = self.price_text.get_rect()
         self.price_text_rect.center = (SCREEN_WIDTH // 2, 180)
@@ -126,18 +123,16 @@ class ClothesMenu:
         self.name_text = text_render(self.items[self.current_item].name)
         self.name_text_rect = self.name_text.get_rect()
         self.name_text_rect.center = (SCREEN_WIDTH // 2, 120)
+
+    def to_next(self):
+        if self.current_item < len(self.items) - 1:
+            self.current_item += 1
+            self.update_labels()
 
     def to_previous(self):
-        if self.current_item != 0:
+        if self.current_item > 0:
             self.current_item -= 1
-
-        self.price_text = text_render(self.items[self.current_item].price)
-        self.price_text_rect = self.price_text.get_rect()
-        self.price_text_rect.center = (SCREEN_WIDTH // 2, 180)
-
-        self.name_text = text_render(self.items[self.current_item].name)
-        self.name_text_rect = self.name_text.get_rect()
-        self.name_text_rect.center = (SCREEN_WIDTH // 2, 120)
+            self.update_labels()
 
     def buy(self):
         if self.game.money >= self.items[self.current_item].price:
@@ -503,14 +498,14 @@ class Game:
                 self.clothes_menu.is_clicked(event)
                 self.food_menu.is_clicked(event)
 
-            # if event.type == self.DECREASE:
-            #     chance = random.randint(1, 10)
-            #     if chance <= 5:
-            #         self.satiety -= 1
-            #     elif 5 < chance <= 9:
-            #         self.happiness -= 1
-            #     else:
-            #         self.health -= 1
+            if event.type == self.DECREASE:
+                chance = random.randint(1, 10)
+                if chance <= 5:
+                    self.satiety -= 1
+                elif 5 < chance <= 9:
+                    self.happiness -= 1
+                else:
+                    self.health -= 1
 
 
     def update(self):
